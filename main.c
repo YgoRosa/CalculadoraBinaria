@@ -2,6 +2,8 @@
 // Ygor Rosa - 3ºA 
 // Implementação da função de conversão de decimal para binário, octal, hexadecimal e BCD às 22:23 do dia 29/08/2024
 // Correção da função Octal e Implementação da função complementado A2, 30/08/24 às 16:25
+// Implementação das novas funções referentes a questão 3, as 21:55 - 30/08 também
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -106,13 +108,11 @@ void decimalParaComplemento2(int numero) {
     if (numero < 0) {
         numero = (1 << 16) + numero; 
     }
-
     while (i >= 0) {
         complemento2[i] = numero % 2;
         numero = numero / 2;
         i--;
     }
-
     printf("Numero em complemento a 2 com 16 bits: ");
     for (int j = 0; j < 16; j++) {
         printf("%d", complemento2[j]);
@@ -120,9 +120,40 @@ void decimalParaComplemento2(int numero) {
     printf("\n\n");
 }
 
+void mostrarBitsFloat(float num) {
+    int bits;
+    bits = *(int*)&num;
+
+    int sinal = (bits >> 31) & 1;
+    int expoente = (bits >> 23) & 0xFF;
+    int expoenteComVies = expoente - 127;
+    int mantissa = bits & 0x7FFFFF;
+
+    printf("Sinal: %d\n", sinal);
+    printf("Expoente (com vies): %d\n", expoente);
+    printf("Expoente: %d\n", expoenteComVies);
+    printf("Fracao: 0x%06X\n", mantissa);
+}
+
+void mostrarBitsDouble(double num) {
+    long long int bits;
+    bits = *(long long int*)&num; 
+
+    int sinal = (bits >> 63) & 1;
+    int expoente = (bits >> 52) & 0x7FF;
+    int expoenteComVies = expoente - 1023;
+    long long int mantissa = bits & 0xFFFFFFFFFFFFF;
+
+    printf("Sinal: %d\n", sinal);
+    printf("Expoente (com vies): %d\n", expoente);
+    printf("Expoente: %d\n", expoenteComVies);
+    printf("Fracao: 0x%013llX\n", mantissa);
+}
 
 int main() {
     int numero;
+    float numeroFloat;
+    double numeroDouble;
 
     printf("Digite um numero decimal: ");
     scanf("%d", &numero);
@@ -132,6 +163,16 @@ int main() {
     decimalParaHexadecimal(numero);
     decimalParaBCD(numero);
     decimalParaComplemento2(numero);
+
+    printf("Digite um numero real para converter em float e double: ");
+    scanf("%f", &numeroFloat);
+    numeroDouble = (double)numeroFloat;
+
+    printf("\n--- Representacao em Float (32 bits) ---\n");
+    mostrarBitsFloat(numeroFloat);
+
+    printf("\n--- Representacao em Double (64 bits) ---\n");
+    mostrarBitsDouble(numeroDouble);
 
     return 0;
 }
